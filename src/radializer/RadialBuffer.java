@@ -128,8 +128,8 @@ public class RadialBuffer {
 				vTexY[i] = 0f;
 			}
 			
-			vTexX[i] = (i / (float)xDivs);
-			//vTexX[i] = p5.mouseX / (float)p5.width;
+			//vTexX[i] = (i / (float)xDivs);
+			vTexX[i] = p5.mouseX / (float)p5.width;
 			
 		}
 		
