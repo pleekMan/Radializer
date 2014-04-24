@@ -1,3 +1,3 @@
-bin/
-src/data/
-src_bkup/
+bin/*
+data/*
+src_bkup/*

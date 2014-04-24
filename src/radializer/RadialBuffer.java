@@ -1,7 +1,7 @@
 package radializer;
 
-import main.Main;
-import main.PAppletSingleton;
+import globals.Main;
+import globals.PAppletSingleton;
 import processing.core.PImage;
 import processing.core.PGraphics;
 
@@ -65,6 +65,10 @@ public class RadialBuffer {
 																				// moire
 			radialSeparation = 0;
 
+			// ESTOY RECORRIENDO LA IMAGEN DE ARRIBA HACIA ABAJO,
+			// PERO DIBUJANDOLA RADIALMENTE DE ABAJO HACIA ARRIBA (SALE ESPEJADA)
+			// ESTA BUENO, PORQ LOS OBJETOS EN LAS IMAGENES GRALMENTE ESTAN CENTRADOS
+			// PERO HABRIA Q RECORRER y invertido, SINO
 			for (int y = 0; y < inputImage.height; y++) {
 
 				float yPosTop1 = radialSeparation * p5.sin(angleTop);
@@ -94,11 +98,92 @@ public class RadialBuffer {
 			imageBuffer.endDraw();
 		}
 	}
+	
+	public void updateUsingVertex(){
+		
+		//int xDivs = (int)(((float)p5.mouseX / p5.width) * 10);
+		int xDivs = 8;
+		
+		//System.out.println(xDivs);
+		float[] vX = new float[xDivs * 2]; // PAR (arriba, abajo)
+		float[] vY = new float[xDivs * 2];
+		float[] vTexX = new float[xDivs * 2];
+		float[] vTexY = new float [xDivs * 2];
+		
+		for (int i = 0; i < xDivs * 2; i++) {
+			
+			if(i % 2 == 0){
+				
+				vX[i] = (imageBuffer.height * 0.5f) * p5.cos((p5.TWO_PI / xDivs) * (i * 0.5f));
+				vY[i] = (imageBuffer.height * 0.5f) * p5.sin((p5.TWO_PI / xDivs) * (i * 0.5f));
+				//p5.println("Angle: " + (p5.TWO_PI / xDivs) * (i * 0.5f));
+				
+				//vTexX[i] = (i / (float)xDivs);
+				vTexY[i] = 1f;
+
+			} else {
+				vX[i] = 0f;
+				vY[i] = 0f;
+				
+				vTexY[i] = 0f;
+			}
+			
+			vTexX[i] = (i / (float)xDivs);
+			//vTexX[i] = p5.mouseX / (float)p5.width;
+			
+		}
+		
+		imageBuffer.beginDraw();
+		imageBuffer.background(0);
+		
+		//--
+		
+		imageBuffer.beginShape(imageBuffer.QUAD_STRIP);
+		imageBuffer.translate(imageBuffer.width * 0.5f, imageBuffer.height * 0.5f);
+
+		imageBuffer.texture(inputImage);
+		for (int i = 0; i < xDivs * 2; i++) {
+			imageBuffer.vertex(vX[i], vY[i], vTexX[i], vTexY[i]);
+		}
+		
+		imageBuffer.vertex(imageBuffer.width * 0.5f, 0, 1, 0);
+		imageBuffer.vertex(0,0, 1, 1);
+
+		imageBuffer.endShape();
+		
+		//-
+		
+		for (int i = 0; i < xDivs * 2; i++) {
+			imageBuffer.text(i, vX[i] + 5, vY[i] - 5);
+			imageBuffer.ellipse(vX[i], vY[i], 10, 10);
+			
+			imageBuffer.stroke(255);
+			imageBuffer.line(p5.mouseX, p5.mouseY, vX[1], vY[1]);
+			imageBuffer.stroke(255);
+
+		}
+		
+		
+		
+		//--
+		
+		/*
+		imageBuffer.beginShape(p5.QUADS);
+		imageBuffer.texture(inputImage);
+		imageBuffer.vertex(100,100,0,0); // 0
+		imageBuffer.vertex(500,100, 1,0); // 1
+		imageBuffer.vertex(p5.mouseX, p5.mouseY, 1, 1); // 2 Esquina
+		imageBuffer.vertex(100, 400, 0, 1);	// 3	
+		imageBuffer.endShape();
+		*/
+		//imageBuffer.image(inputImage, p5.mouseX, p5.mouseY);
+		imageBuffer.endDraw();
+	}
 
 	public void render(float atX, float atY) {
 		p5.pushMatrix();
 		p5.translate(atX, atY);
-		p5.scale((p5.mouseX / (float) p5.width) * 4);
+		//p5.scale((p5.mouseY / (float) p5.height) * 4);
 		p5.imageMode(p5.CENTER);
 		p5.image(imageBuffer, 0, 0);
 		p5.popMatrix();
@@ -118,8 +203,12 @@ public class RadialBuffer {
 	}
 
 	private void createImageBuffer(PImage _inputImage) {
-		imageBuffer = p5.createGraphics(_inputImage.height * 2, _inputImage.height * 2);
+		imageBuffer = p5.createGraphics(_inputImage.height * 2, _inputImage.height * 2, p5.P3D);
 		imageBuffer.smooth();
+		
+		imageBuffer.beginDraw();
+		imageBuffer.textureMode(p5.NORMAL);
+		imageBuffer.endDraw();
 	}
 
 	public boolean hasImage() {
