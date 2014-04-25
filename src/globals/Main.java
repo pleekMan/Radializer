@@ -15,7 +15,7 @@ public class Main extends PApplet {
 		setPAppletSingleton();
 
 		radialImage = new RadialBuffer();
-		PImage newImage = loadImage("image_06.jpg");
+		PImage newImage = loadImage("image_05.jpg");
 		radialImage.loadImage(newImage);
 		
 		textureMode(NORMAL);

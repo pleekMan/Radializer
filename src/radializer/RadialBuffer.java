@@ -101,8 +101,11 @@ public class RadialBuffer {
 	
 	public void updateUsingVertex(){
 		
-		//int xDivs = (int)(((float)p5.mouseX / p5.width) * 10);
-		int xDivs = 8;
+		// CALCULATE VERTEX
+		
+		//int xDivs = (int)(((float)p5.mouseX / p5.width) * inputImage.width);
+		//int xDivs = (int)(inputImage.width * 0.25f);
+		int xDivs = 10;
 		
 		//System.out.println(xDivs);
 		float[] vX = new float[xDivs * 2]; // PAR (arriba, abajo)
@@ -113,31 +116,38 @@ public class RadialBuffer {
 		for (int i = 0; i < xDivs * 2; i++) {
 			
 			if(i % 2 == 0){
-				
+				// y = radius * (sin(angle)) // x = radius * (cos(angle))
 				vX[i] = (imageBuffer.height * 0.5f) * p5.cos((p5.TWO_PI / xDivs) * (i * 0.5f));
 				vY[i] = (imageBuffer.height * 0.5f) * p5.sin((p5.TWO_PI / xDivs) * (i * 0.5f));
 				//p5.println("Angle: " + (p5.TWO_PI / xDivs) * (i * 0.5f));
 				
-				//vTexX[i] = (i / (float)xDivs);
+				vTexX[i] = (i / (float)xDivs * 0.5f);
 				vTexY[i] = 1f;
 
 			} else {
-				vX[i] = 0f;
-				vY[i] = 0f;
 				
+				vX[i] = ((p5.mouseX / (float)p5.width) * 200) * p5.cos((p5.TWO_PI / xDivs) * ((i-1) * 0.5f));
+				vY[i] = ((p5.mouseX / (float)p5.width) * 200) * p5.sin((p5.TWO_PI / xDivs) * ((i-1) * 0.5f));
+				
+				//vX[i] = 0f;
+				//vY[i] = 0f;
+				
+				vTexX[i] = ((i-1) / (float)xDivs * 0.5f);
 				vTexY[i] = 0f;
 			}
 			
-			//vTexX[i] = (i / (float)xDivs);
-			vTexX[i] = p5.mouseX / (float)p5.width;
+			//vTexX[i] = (i / (float)xDivs * 0.5f);
+			//vTexX[i] = p5.mouseX / (float)p5.width;
 			
 		}
 		
 		imageBuffer.beginDraw();
 		imageBuffer.background(0);
 		
-		//--
+		//-- DRAW VERTEX
 		
+		//imageBuffer.noStroke(); // DRAWING EDGES
+
 		imageBuffer.beginShape(imageBuffer.QUAD_STRIP);
 		imageBuffer.translate(imageBuffer.width * 0.5f, imageBuffer.height * 0.5f);
 
@@ -147,21 +157,19 @@ public class RadialBuffer {
 		}
 		
 		imageBuffer.vertex(imageBuffer.width * 0.5f, 0, 1, 0);
-		imageBuffer.vertex(0,0, 1, 1);
+		imageBuffer.vertex((p5.mouseX / (float)p5.width) * 200,0, 1, 1);
 
 		imageBuffer.endShape();
 		
-		//-
+		//-- DRAW HELPERS
 		
 		for (int i = 0; i < xDivs * 2; i++) {
-			imageBuffer.text(i, vX[i] + 5, vY[i] - 5);
+			imageBuffer.text(vTexX[i] + " : " + vTexY[i], vX[i] + 5, vY[i] - 5);
 			imageBuffer.ellipse(vX[i], vY[i], 10, 10);
-			
-			imageBuffer.stroke(255);
-			imageBuffer.line(p5.mouseX, p5.mouseY, vX[1], vY[1]);
-			imageBuffer.stroke(255);
-
 		}
+		
+		
+		
 		
 		
 		
