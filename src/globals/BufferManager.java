@@ -38,7 +38,7 @@ public class BufferManager {
 		}
 		*/
 		
-		if (buffers.get(buffers.size() - 1).hasImage()) {
+		if (!buffers.isEmpty()) {
 			buffers.get(buffers.size() - 1).updateUsingVertex();
 			buffers.get(buffers.size() - 1).render(p5.width * 0.5f, p5.height * 0.5f);
 		}
@@ -47,7 +47,7 @@ public class BufferManager {
 	
 	public void render(){
 		
-		if (buffers.get(buffers.size() - 1).hasImage()) {
+		if (!buffers.isEmpty()) {
 			buffers.get(buffers.size() - 1).render(p5.width * 0.5f, p5.height * 0.5f);
 		}
 	}
