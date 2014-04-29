@@ -17,6 +17,8 @@ public class RadialBuffer {
 
 	float angleTop, angleBottom;
 	float radialSeparation;
+	float normMinRadialSeparation;
+	float normMaxRadialSeparation;
 
 	boolean renderEnabled;
 
@@ -24,7 +26,9 @@ public class RadialBuffer {
 
 		p5 = getP5();
 		columnCounter = 0;
-		rePxSeparation = 1;
+		rePxSeparation = 1f;
+		normMaxRadialSeparation = 0;
+		normMaxRadialSeparation = 1;
 		scaling = 1;
 
 		renderEnabled = true;
@@ -46,27 +50,17 @@ public class RadialBuffer {
 		if (columnCounter < inputImage.width) {
 
 			imageBuffer.beginDraw();
-			imageBuffer.background(50);
+			// imageBuffer.background(50);
 			imageBuffer.noStroke();
 
 			imageBuffer.pushMatrix();
 			imageBuffer.translate(imageBuffer.width * 0.5f, imageBuffer.height * 0.5f);
+			imageBuffer.rotate(-p5.HALF_PI);
 			// scale(scaling );
 
 			// CALCULATE ANGLE (SAME COLUMN) TO DRAW POINTS IN THE QUAD
 			angleTop = ((p5.TWO_PI / inputImage.width) * (columnCounter + 1));
-			angleBottom = ((p5.TWO_PI / inputImage.width) * (columnCounter - 1)); // DEBERIA
-																					// SER
-																					// "* (columnCounter));",
-																					// pero
-																					// de
-																					// alguna
-																					// manera
-																					// asi
-																					// se
-																					// diluye
-																					// el
-																					// moire
+			angleBottom = ((p5.TWO_PI / inputImage.width) * (columnCounter - 1));
 			radialSeparation = 0;
 
 			// ESTOY RECORRIENDO LA IMAGEN DE ARRIBA HACIA ABAJO,
@@ -75,6 +69,7 @@ public class RadialBuffer {
 			// ESTA BUENO, PORQ LOS OBJETOS EN LAS IMAGENES GRALMENTE ESTAN
 			// CENTRADOS
 			// PERO HABRIA Q RECORRER y invertido, SINO
+
 			for (int y = 0; y < inputImage.height; y++) {
 
 				float yPosTop1 = radialSeparation * p5.sin(angleTop);
@@ -90,9 +85,11 @@ public class RadialBuffer {
 				// imageBuffer.stroke(inputImage.get(columnCounter, y));
 
 				imageBuffer.quad(xPosTop1, yPosTop1, xPosTop2, yPosTop2, xPosBottom1, yPosBottom1, xPosBottom2, yPosBottom2);
-				// imageBuffer.ellipse(xPosTop1, yPosTop1, 4, 4);
-				// imageBuffer.point(yPos,xPos);
-				radialSeparation += rePxSeparation;
+
+				// radialSeparation += rePxSeparation;
+				// radialSeparation = p5.map(y, 0, inputImage.height, 0,
+				// columnCounter);
+				radialSeparation = p5.map(y, 0, inputImage.height, (normMinRadialSeparation * inputImage.height), (normMaxRadialSeparation * inputImage.height));
 			}
 
 			imageBuffer.popMatrix();
@@ -242,5 +239,15 @@ public class RadialBuffer {
 
 	public void setRenderEnabled(boolean state) {
 		renderEnabled = state;
+	}
+
+	public void updateRadialExtent(float value) {
+		normMaxRadialSeparation = value;
+
+	}
+
+	public void updateRingosity(float[] arrayValue) {
+		normMinRadialSeparation = arrayValue[0];
+		normMaxRadialSeparation = arrayValue[1];
 	}
 }

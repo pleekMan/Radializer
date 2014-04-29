@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="/PROJECTS/Eclipse WorkSpace/libraries/openGL/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/PROJECTS/Eclipse WorkSpace/libraries/openGL/jogl-all.jar"/>
 	<classpathentry kind="lib" path="/PROJECTS/Eclipse WorkSpace/libraries/processing Core/core_2.0.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/controlP5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

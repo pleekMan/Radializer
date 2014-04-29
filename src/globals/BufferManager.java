@@ -39,8 +39,8 @@ public class BufferManager {
 		*/
 		
 		if (!buffers.isEmpty()) {
-			buffers.get(buffers.size() - 1).updateUsingVertex();
-			buffers.get(buffers.size() - 1).render(p5.width * 0.5f, p5.height * 0.5f);
+			buffers.get(buffers.size() - 1).update();
+			//buffers.get(buffers.size() - 1).render(p5.width * 0.5f, p5.height * 0.5f);
 		}
 		
 	}
@@ -49,6 +49,18 @@ public class BufferManager {
 		
 		if (!buffers.isEmpty()) {
 			buffers.get(buffers.size() - 1).render(p5.width * 0.5f, p5.height * 0.5f);
+		}
+	}
+
+	public void updateRadialExtent(float value) {
+		if (!buffers.isEmpty()) {
+			buffers.get(buffers.size() - 1).updateRadialExtent(value);
+		}		
+	}
+
+	public void updateRingosity(float[] arrayValue) {
+		if (!buffers.isEmpty()) {
+			buffers.get(buffers.size() - 1).updateRingosity(arrayValue);
 		}
 	}
 }
